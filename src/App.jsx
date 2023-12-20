@@ -6,6 +6,7 @@ import axios from "axios";
 import { format } from "timeago.js";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import { addPin, getAllPins } from "./lib/endpoint";
 
 export default function App() {
   const myStorage = window.localStorage;
@@ -28,14 +29,17 @@ export default function App() {
     setCurrentPlaceId(id);
     setViewport({ ...viewport, latitude: lat, longitude: long });
   };
-
   const handleAddClick = (e) => {
-    const [longitude, latitude] = e.lngLat;
-    setNewPlace({
-      lat: latitude,
-      long: longitude,
+    const { lngLat } = e;
+    console.log("Target",e.lngLat);
+    if (!lngLat) return;
+  
+     setNewPlace({
+      lat: e.lngLat.lat,
+      long: e.lngLat.lng,
     });
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,7 +53,7 @@ export default function App() {
     };
 
     try {
-      const res = await axios.post("/pins", newPin);
+      const res = await addPin(newPin)
       setPins([...pins, res.data]);
       setNewPlace(null);
     } catch (err) {
@@ -60,8 +64,10 @@ export default function App() {
   useEffect(() => {
     const getPins = async () => {
       try {
-        const allPins = await axios.get("/pins");
+    //    debugger
+        const allPins = await getAllPins()
         setPins(allPins.data);
+    
       } catch (err) {
         console.log(err);
       }
@@ -78,21 +84,19 @@ export default function App() {
   
       <Map
         mapboxAccessToken={process.env.REACT_APP_MAPBOX}
-        initialViewState={{
-          longitude: 30,
-          latitude: -3,
-          zoom: 4,
-        }}
+        initialViewState={{...viewport}}
+        onViewportChange={(viewport) => setViewport(viewport)}
+        onDblClick={currentUsername && handleAddClick}
         style={{ width: "100vw", height: "100vh" }}
         mapStyle="mapbox://styles/safak/cknndpyfq268f17p53nmpwira"
       >
-       {pins.map((p) => (
+       {pins && pins.map((p) => (
           <>
             <Marker
-              latitude={p.lat}
-              longitude={p.long}
-              offsetLeft={-3.5 * viewport.zoom}
-              offsetTop={-7 * viewport.zoom}
+                 latitude={p.lat}
+                 longitude={p.long}
+                 offsetLeft={-20} // Adjust this value as needed
+                 offsetTop={-40} // Adjust this value as needed
             >
               <Room
                 style={{

@@ -2,6 +2,7 @@ import { Cancel, Room } from "@mui/icons-material";
 import axios from "axios";
 import { useRef, useState } from "react";
 import "./register.css";
+import { UserRegister } from "../lib/endpoint";
 
 export default function Register({ setShowRegister }) {
   const [success, setSuccess] = useState(false);
@@ -19,7 +20,7 @@ export default function Register({ setShowRegister }) {
     };
 
     try {
-      await axios.post("/users/register", newUser);
+      await UserRegister(newUser)
       setError(false);
       setSuccess(true);
     } catch (err) {
@@ -30,7 +31,7 @@ export default function Register({ setShowRegister }) {
     <div className="registerContainer">
       <div className="logo">
         <Room className="logoIcon" />
-        <span>LamaPin</span>
+        <span>Map Pin</span>
       </div>
       <form onSubmit={handleSubmit}>
         <input autoFocus placeholder="username" ref={usernameRef} />
