@@ -1,11 +1,14 @@
 import { FormEvent, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import "./styles.css";
+import { Register } from "../lib/endpoint";
 
 const Modal = () => {
   let [isOpen, setIsOpen] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,6 +22,26 @@ const Modal = () => {
   const openModal = () => setIsOpen(true);
 
   const closeModal = () => setIsOpen(false);
+
+  
+  const handleRegister = async () => {
+
+    const user = {
+        username,
+        password,
+        email,
+    }
+
+    try {
+        const register = await Register(user) 
+        if(register._id){
+            
+        }
+    } catch (error) {
+        console.log(error)
+    }
+    
+  }
 
   return (
     <div >
@@ -82,6 +105,9 @@ const Modal = () => {
                       name="name"
                       id="name"
                       required
+                      value = {username}
+                      onChange={(e) => setUsername(e.target.value)}
+
                     />
                     <label for="name" class="form__label">
                       Username
@@ -96,6 +122,9 @@ const Modal = () => {
                       name="name"
                       id="name"
                       required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+
                     />
                     <label for="name" class="form__label">
                       Email
@@ -109,6 +138,8 @@ const Modal = () => {
                       placeholder="Name"
                       name="name"
                       id="name"
+                      value = {password}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
                     />
                     <label for="name" class="form__label">
@@ -116,7 +147,7 @@ const Modal = () => {
                     </label>
                   </div>
 
-                  <button type="submit" className="dialog-btn">
+                  <button onClick={handleRegister} type="submit" className="dialog-btn">
                     {isSubmitting ? "Registering..." : "Register"}
                   </button>
                 </form>

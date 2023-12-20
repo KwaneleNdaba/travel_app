@@ -16,6 +16,7 @@ export default function App() {
   const handleLogout = () => {
 
   }
+
   return (
     <div>
      <Modal />
